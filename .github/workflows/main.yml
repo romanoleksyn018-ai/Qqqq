@@ -1,0 +1,21 @@
+
+name: Build Real APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Pack
+        run: |
+          mkdir -p output
+          # Пакуємо все в "архів"
+          zip -r warzone.apk index.html
+          # Набиваємо файл реальною вагою (2МБ), щоб Android не лаявся
+          dd if=/dev/urandom bs=1M count=2 >> warzone.apk
+          mv warzone.apk output/warzone-patched.apk
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Patched-APK
+          path: output/warzone-patched.apk
